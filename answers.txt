@@ -1,0 +1,278 @@
+Basic Rules
+===========
+1. Review the questions in this file. Reply back via email with an estimated
+   delivery date.
+2. Answer each of the questions below.
+3. Add your answer to each question to this file, in-line.
+4. Send the final file back for review.
+5. Bonus points if you add this initial file to your public git repo and share
+   that repo with us so we can see how your answers progressed.
+6. You may use external sources to help answer the questions (i.e. Google, etc),
+   but you should always cite your sources in your comments. Learning from
+   others is good. Plagiarism is bad.
+
+
+Developer Test
+==============
+
+1.  What editor will you use to edit this file, and why?
+
+    - metapad, ultraeedit
+    - personal preference
+
+2.  Some of the questions will ask for a solution in the language of
+    your choice.  What language(s) will you choose, and why?
+
+    - python 2.7, lua 5.1
+    - personal preference
+
+3.  Explain the difference between testing and debugging.
+
+    - Testing is monitoring the state of a system to make sure it acts as it should.
+    - Debugging is monitoring the state of a system to find why it is acting as it does.
+
+4.  Consider a user querying a search engine.  Describe, in as much
+    detail as you like, what happens between the user clicking the
+    "submit" button and the display of the results.
+
+    - user clicks submit
+    - browser handles click and submit html and js logic
+    - if browser decides to submit, then it prepares the http request to post,
+      with appropriate headers, body (if this was a real html form),
+      and the target url, (defined in the html form or custom js)
+    - server receives and processes request
+    - server sends an http response back to the client
+      the response includes the html content to display
+    - browser renders the response
+
+The two tables below describe relationships between employees,
+managers, and departments (the columns employee.mgr_id and
+department.head both refer to employee.id).  Use these definitions to
+answer questions 5-10.  If you need to use any nonstandard functions or
+syntax, be sure to name the DBMS that implements them.
+
+    - >>> import sqlite3
+    - >>> sqlite3.sqlite_version
+    - '3.13.0'
+
+employee                              department
+----------------------------------    -----------------------
+ id |        name        | mgr_id           name      | head
+----+--------------------+--------    ----------------+------
+  1 | Jonathan Archer    |     11      Operations     |   11
+  2 | Christopher Pike   |     12      Marketing      |   12
+  3 | James Kirk         |     13      IT             |   13
+  4 | Jean-Luc Picard    |     14      HR             |   14
+  5 | Kathryn Janeway    |     15      Sales          |   15
+  6 | Ralph Wiggum       |     11
+  7 | Troy McClure       |     12
+  8 | Waylon Smithers    |     17
+  9 | Edna Krabappel     |     16
+ 10 | Ned Flanders       |     15
+ 11 | Buffy Summers      |
+ 12 | Xander Harris      |
+ 13 | Willow Rosenberg   |
+ 14 | Rupert Giles       |
+ 15 | Oz Selbie          |
+ 16 | Dade Murphy        |     11
+ 17 | Kate Libby         |     13
+ 18 | Paul Cook          |     17
+ 19 | Emmanuel Goldstein |     16
+ 20 | Winston Smith      |     15
+ 21 | Thomas Anderson    |     15
+ 22 | Agent Smith        |     14
+ 23 | Malcolm Reynolds   |     14
+ 24 | River Tam          |     18
+ 25 | Jason Nesmith      |     18
+
+5.  Write an SQL query to list the full name of every employee,
+    alphabetized by first name.
+
+    - from e.py
+
+    select name from employee order by name
+
+6.  Write an SQL query to list the full name of every employee,
+    alphabetized by last name.
+
+    - from e.py
+
+    select
+        substr(name, 1, instr(name, ' ') - 1) as first_name,
+        substr(name, instr(name, ' ') + 1) as last_name
+    from employee
+    order by last_name
+
+7.  Write an SQL query to list the full name of every employee along
+    with the full name of his/her manager.
+
+    - from e.py
+
+    select
+        employee.name,
+        manager.name
+    from employee
+    left join employee as manager
+        on employee.mgr_id == manager.id
+
+
+8.  Write an SQL query to list the full name of every employee in the
+    Sales department.
+
+    - from e.py
+
+    select
+        employee.name
+    from employee
+    inner join department
+        on employee.mgr_id == department.head
+    where
+        department.name == 'Sales'
+
+9.  Write an SQL query to list the full name of every employee along
+    with name of his/her department.
+
+    - from e.py
+
+    select
+        employee.name,
+        department.name
+    from employee
+    left join department
+        on employee.mgr_id == department.head
+
+10. Is there a better design for a database that supports the queries
+    described in questions 5-9?  If so, describe it.  If not, why not?
+
+    - sure
+    - optionally, split employee.name column into first and last names
+    - optionally, reduce joins with denormalization
+      - eg. add employee.department_id column
+      - eg. add employee.department_name column
+    - optionally, index columns used in expressions
+
+11. Write a function in the language of your choice that implements
+    quicksort on an array of integers.
+
+    - from d.py
+
+    def partition(A, lo, hi):
+        i = lo - 1
+        j = lo
+        pivot = A[hi]
+        while j <= hi - 1:
+            if A[j] <= pivot:
+                i = i + 1
+                A[i], A[j] = A[j], A[i]
+            j = j + 1
+        A[i + 1], A[hi] = A[hi], A[i + 1]
+        return i + 1
+
+    def quicksort(A, lo, hi):
+        if lo < hi:
+            p = partition(A, lo, hi)
+            quicksort(A, lo, p - 1)
+            quicksort(A, p + 1, hi)
+
+12. Write a function in the language of your choice that performs
+    binary search on a sorted array of integers.
+
+    - from d.py
+
+    def binary_search(A, x, lo, hi):
+        while lo < hi:
+            i = (lo+hi)//2
+            if A[i] < x:
+                lo = i + 1
+            elif A[i] > x:
+                hi = i
+            else:
+                return i
+        return -1
+
+13. Write a function in the language of your choice performs the query
+    you wrote for question 7, and outputs the results as an HTML table.
+
+    - from e.py
+
+    def question13(connection):
+        c = connection.cursor()
+
+        query = '''
+            select
+                employee.name,
+                manager.name
+            from employee
+            left join employee as manager
+                on employee.mgr_id == manager.id
+        '''
+
+        print '<table>'
+        print '  <tr><th>employee name</th><th>manager name</th></tr>'
+        for row in c.execute(query):
+            print '  <tr>'
+            print '    <td>{0}</td>'.format(row[0])
+            print '    <td>{0}</td>'.format(row[1])
+            print '  </tr>'
+        print '</table>'
+
+14. Write a program in the language of your choice that takes a filename
+    and a number N as arguments and retrieves and outputs the Nth line
+    from the file.
+
+    - from d.py
+
+    def get_line(fpath, n):
+        with open(fpath, 'rb') as f:
+            line_count = 0
+            for line in f:
+                line_count = line_count + 1
+                if line_count == n:
+                    return line.rstrip('\n\r')
+
+    if __name__=='__main__':
+        import sys
+        print(get_line(sys.argv[1], int(sys.argv[2])))
+
+15. Write the function from question 12 in a different language.
+
+    - from d.lua
+    
+    function binary_search(A, x, lo, hi)
+        while lo < hi do
+            local i = math.floor((lo+hi)/2)
+            if A[i+1] < x then
+                lo = i + 1
+            elseif A[i+1] > x then
+                hi = i
+            else
+                return i
+            end
+        end
+        return -1
+    end
+    
+
+16. Write the program from question 14 in a different language (it can
+    be the same language you used for #15, but it doesn't have to be).
+
+    - from d.lua
+
+    function get_line(fpath, n)
+        local f = assert(io.open(fpath, 'rb'))
+        local line_count = 0
+        local line = f:read()
+        local result
+        while line do
+            line_count = line_count + 1
+            if line_count == n then
+                result = line
+                break
+            end
+            line = f:read()
+        end
+        assert(f:close())
+        return result
+    end
+    
+    print(get_line(arg[1], tonumber(arg[2])))
