@@ -1,17 +1,3 @@
-Basic Rules
-===========
-1. Review the questions in this file. Reply back via email with an estimated
-   delivery date.
-2. Answer each of the questions below.
-3. Add your answer to each question to this file, in-line.
-4. Send the final file back for review.
-5. Bonus points if you add this initial file to your public git repo and share
-   that repo with us so we can see how your answers progressed.
-6. You may use external sources to help answer the questions (i.e. Google, etc),
-   but you should always cite your sources in your comments. Learning from
-   others is good. Plagiarism is bad.
-
-
 Developer Test
 ==============
 
